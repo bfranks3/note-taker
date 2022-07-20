@@ -1,15 +1,19 @@
-const path = require("path");
-const router = require("express").Router();
+const path = require('path');
+const router = require('express').Router();
 
-//routes
-router.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/assets/index.html"))
+// get home page
+router.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
-router.get("/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/assets/notes.html"))
+
+// get notes page
+router.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/notes.html'));
 });
-router.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../public/assets/index.html"))
+
+// any other selection will take user to home page
+router.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 
 module.exports = router;

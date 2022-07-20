@@ -1,45 +1,30 @@
-//dependencies
+// DEPENDENCIES
+const save = require('../../db/save');
 const router = require('express').Router();
 
-const { filterByQuery, findByTitle, createNewNote, validateNotes } = require('../../lib/notes');
-const { notes } = require('../../data/notes');
-
-//get routes
-router.get("/api/notes", (req, res) => {
-    return res.json(notes)
+// ROUTING
+// Get Route
+router.get('/notes', (req, res) => {
+  save.getNotes()
+    .then((parsedNotes) => {
+      return res.json(parsedNotes);
+    })
+    .catch((err) => res.status(500).json(err));
 })
 
-router.get("/api/notes/:id", function (req, res) {
-    res.json(notes[req.params.id]);
-});
+// Post Route
+router.post('/notes', (req, res) => {
+  save.addNote(req.body)
+    .then((newNote) => res.json(newNote))
+    .catch((err) => res.status(500).json(err));
+})
 
-//post
-router.post("/api/notes", (req, res) => {
-    let results = notes;
-    if (req.query) {
-        results = filterByQuery(req.query, results);
-    }
-    res.json(results);
-});
+// Delete Route
+router.delete('/notes/:id', (req, res) => {
+  save.removeNote(req.params.id)
+    .then(() => res.json({ ok: true }))
+    .catch((err) => res.status(500).json(err));
+})
 
-router.delete("/db/:id", (req, res) => {
-    const noteId = req.params.id;
-  
-    notes.forEach((n, index) => {
-      if(noteId == n.id){notes.splice(index,1)
-  
-        const notesCopy = notes.slice();
-        
-        const jsonNotes = JSON.stringify(notesCopy)
-  
-        fs.writeFile("./db/db.json", jsonNotes, function(error) {
-          if (error) {
-            return console.log(error);
-          }
-          console.log("Note Deleted");
-        })
-  
-      }
-    })
-    res.json(notes);
-  })
+// EXPORT
+module.exports = router;
